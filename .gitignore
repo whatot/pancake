@@ -12,3 +12,5 @@ Cargo.lock
 # IDE or editors
 *.swp
 .vscode
+.idea
+*.iml
