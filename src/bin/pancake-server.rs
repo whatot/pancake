@@ -8,8 +8,8 @@ use clap::Arg;
 use pancake::config::PancakeConfig;
 use std::error::Error;
 use std::fs::File;
-use std::process;
 use std::io::Read;
+use std::process;
 
 const SAMPLE_CONFIG_ARG: &str = "print-sample-config";
 const SINGLE_NODE_MODE: &str = "single-node-mode";
