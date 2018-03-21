@@ -14,3 +14,12 @@ impl Default for PancakeConfig {
         }
     }
 }
+
+impl PancakeConfig {
+    #[warn(dead_code)]
+    fn single_node_config() -> PancakeConfig {
+        let config = PancakeConfig::default();
+        // TODO: add single node special config
+        config
+    }
+}
