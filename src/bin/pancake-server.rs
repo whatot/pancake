@@ -35,13 +35,15 @@ fn main() {
                 .value_name("IP:PORT")
                 .help("Set listening address"),
         )
-        .arg(Arg::with_name(SAMPLE_CONFIG_ARG)
-                 .long(SAMPLE_CONFIG_ARG)
-                 .help("Print a sample config to stdout"),
+        .arg(
+            Arg::with_name(SAMPLE_CONFIG_ARG)
+                .long(SAMPLE_CONFIG_ARG)
+                .help("Print a sample config to stdout"),
         )
-        .arg(Arg::with_name(SINGLE_NODE_MODE)
-            .long(SINGLE_NODE_MODE)
-            .help("Single node as a cluster")
+        .arg(
+            Arg::with_name(SINGLE_NODE_MODE)
+                .long(SINGLE_NODE_MODE)
+                .help("Single node as a cluster"),
         )
         .get_matches();
 
@@ -51,7 +53,8 @@ fn main() {
         process::exit(0);
     }
 
-    let mut config = matches.value_of("config")
+    let mut config = matches
+        .value_of("config")
         .map_or_else(PancakeConfig::default, |path| {
             File::open(&path)
                 .map_err::<Box<Error>, _>(|e| Box::new(e))
