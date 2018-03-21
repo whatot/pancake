@@ -1,25 +1,23 @@
-
 pub const DEFAULT_LISTENING_ADDR: &str = "127.0.0.1:22560";
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(default)]
 pub struct PancakeConfig {
     pub addr: String,
+    pub single_node_mode: bool,
 }
 
 impl Default for PancakeConfig {
     fn default() -> PancakeConfig {
         PancakeConfig {
             addr: DEFAULT_LISTENING_ADDR.to_owned(),
+            single_node_mode: false,
         }
     }
 }
 
 impl PancakeConfig {
-    #[warn(dead_code)]
-    fn single_node_config() -> PancakeConfig {
-        let config = PancakeConfig::default();
-        // TODO: add single node special config
-        config
+    pub fn setup_single_node(&mut self) {
+        self.single_node_mode = true;
     }
 }
