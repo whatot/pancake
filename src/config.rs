@@ -10,7 +10,7 @@ pub struct PancakeConfig {
 impl Default for PancakeConfig {
     fn default() -> PancakeConfig {
         PancakeConfig {
-            addr: DEFAULT_LISTENING_ADDR.to_owned(),
+            addr: DEFAULT_LISTENING_ADDR.to_string(),
             single_node_mode: false,
         }
     }

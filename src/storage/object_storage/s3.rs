@@ -8,15 +8,16 @@ use super::ObjectStorage;
 
 struct AwsS3Client {
     bucket_name: String,
+    s3_client: S3Client,
 }
 
-struct S3Config {
+pub struct S3Config {
     access_key_id: String,
     secret_access_key: String,
     bucket_name: String,
     endpoint_url: String,
     use_https: bool,
-    use_v4_signature: u8,
+    use_v4_signature: bool,
     region_name: String,
 }
 
