@@ -1,5 +1,5 @@
-use std::fmt;
 use std::error::Error;
+use std::fmt;
 
 #[derive(Debug, PartialEq, Default)]
 pub struct OpError {
@@ -19,16 +19,19 @@ impl fmt::Display for OpError {
 }
 
 pub type KeyType = String;
+pub type SmallValueType = [u8];
 
 impl OpError {
     pub fn new(input: &str) -> Self {
-        OpError { message: format!("ObjectStorage Operation failed: {}", input) }
+        OpError {
+            message: format!("ObjectStorage Operation failed: {}", input),
+        }
     }
 }
 
 pub trait ObjectStorage {
-    fn get(&self, key: KeyType) -> Result<Option<&[u8]>, OpError>;
-    fn put(&self, key: KeyType, value: &[u8]) -> Result<(), OpError>;
+    fn get(&self, key: KeyType) -> Result<Option<&SmallValueType>, OpError>;
+    fn put(&self, key: KeyType, value: &SmallValueType) -> Result<(), OpError>;
     fn rename(&self, src_key: KeyType, dst_key: KeyType) -> Result<(), OpError>;
     fn copy(&self, src_key: KeyType, dst_key: KeyType) -> Result<(), OpError>;
     fn remove(&self, key: KeyType) -> Result<(), OpError>;
