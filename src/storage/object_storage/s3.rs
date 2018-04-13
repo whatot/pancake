@@ -43,39 +43,42 @@ impl AwsS3Client {
         );
         let provider = ChainProvider::new(param_provider);
 
-        let mut region: Region = Region::UsEast1;
-        if s3_config.is_aws_s3 {
-            region = Region::from_str(&s3_config.region_name).unwrap();
-        }
-
         let mut signature = Signature::V4;
         if s3_config.use_v2_signature {
             signature = Signature::V2
         }
 
-        let endpoint_fix_url: String;
-        if s3_config.endpoint_url.starts_with("http") {
-            endpoint_fix_url = s3_config.endpoint_url
-        } else if s3_config.use_https {
-            endpoint_fix_url = "https://".to_string() + &s3_config.endpoint_url;
+        let endpoint_url: Option<Url>;
+        let mut region: Region = Region::UsEast1;
+        if s3_config.is_aws_s3 {
+            region = Region::from_str(&s3_config.region_name).unwrap();
+            endpoint_url = None;
         } else {
-            endpoint_fix_url = "http://".to_string() + &s3_config.endpoint_url;
+            let url_str: String;
+            if s3_config.endpoint_url.starts_with("http") {
+                url_str = s3_config.endpoint_url
+            } else if s3_config.use_https {
+                url_str = "https://".to_string() + &s3_config.endpoint_url;
+            } else {
+                url_str = "http://".to_string() + &s3_config.endpoint_url;
+            }
+            endpoint_url = Some(Url::parse(url_str.as_str()).unwrap());
         }
 
-        let endpoint = Endpoint::new(
-            region,
-            signature,
-            Some(Url::parse(endpoint_fix_url.as_str()).unwrap()),
-            Some(Url::parse(s3_config.proxy_url.as_str()).unwrap()),
-            None,
-            Some(false),
-        );
+        let proxy: Option<Url>;
+        if s3_config.proxy_url.is_empty() {
+            proxy = None;
+        } else {
+            proxy = Some(Url::parse(s3_config.proxy_url.as_str()).unwrap());
+        }
+
+        let endpoint = Endpoint::new(region, signature, endpoint_url, proxy, None, Some(false));
 
         let client = S3Client::new(provider, endpoint);
-        // check whether bucket is reachable
         let head_bucket_req = HeadBucketRequest {
             bucket: s3_config.bucket_name.clone(),
         };
+        // head_bucket returns Ok(()) if found and you have permission else error.
         client.head_bucket(&head_bucket_req).unwrap();
 
         AwsS3Client {
