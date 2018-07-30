@@ -65,12 +65,11 @@ impl AwsS3Client {
             endpoint_url = Some(Url::parse(url_str.as_str()).unwrap());
         }
 
-        let proxy: Option<Url>;
-        if s3_config.proxy_url.is_empty() {
-            proxy = None;
+        let proxy: Option<Url> = if !s3_config.proxy_url.is_empty() {
+            Some(Url::parse(s3_config.proxy_url.as_str()).unwrap())
         } else {
-            proxy = Some(Url::parse(s3_config.proxy_url.as_str()).unwrap());
-        }
+            None
+        };
 
         let endpoint = Endpoint::new(region, signature, endpoint_url, proxy, None, Some(false));
 
