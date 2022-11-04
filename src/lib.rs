@@ -1,9 +1,10 @@
 #![crate_type = "lib"]
 
-extern crate aws_sdk_rust;
 extern crate serde;
 #[macro_use]
 extern crate serde_derive;
+extern crate aws_sdk_s3;
+extern crate aws_smithy_http;
 extern crate hyper;
 extern crate serde_json;
 extern crate url;

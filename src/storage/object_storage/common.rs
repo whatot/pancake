@@ -1,6 +1,8 @@
 use std::error::Error;
 use std::fmt;
 
+use async_trait::async_trait;
+
 #[derive(Debug, PartialEq, Default)]
 pub struct OpError {
     message: String,
@@ -14,7 +16,7 @@ impl Error for OpError {
 
 impl fmt::Display for OpError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", self.description())
+        write!(f, "{}", self.to_string())
     }
 }
 
@@ -29,10 +31,11 @@ impl OpError {
     }
 }
 
+#[async_trait]
 pub trait ObjectStorage {
-    fn get(&self, key: KeyType) -> Result<Option<&SmallValueType>, OpError>;
-    fn put(&self, key: KeyType, value: &SmallValueType) -> Result<(), OpError>;
-    fn rename(&self, src_key: KeyType, dst_key: KeyType) -> Result<(), OpError>;
-    fn copy(&self, src_key: KeyType, dst_key: KeyType) -> Result<(), OpError>;
-    fn remove(&self, key: KeyType) -> Result<(), OpError>;
+    async fn get(&self, key: KeyType) -> Result<Option<&SmallValueType>, OpError>;
+    async fn put(&self, key: KeyType, value: &SmallValueType) -> Result<(), OpError>;
+    async fn rename(&self, src_key: KeyType, dst_key: KeyType) -> Result<(), OpError>;
+    async fn copy(&self, src_key: KeyType, dst_key: KeyType) -> Result<(), OpError>;
+    async fn remove(&self, key: KeyType) -> Result<(), OpError>;
 }

@@ -1,76 +1,79 @@
-#[macro_use]
 extern crate clap;
 extern crate pancake;
 extern crate toml;
 
-use clap::App;
-use clap::Arg;
+use std::path::PathBuf;
+
+use clap::{Parser, Subcommand};
+
 use pancake::config::PancakeConfig;
 use std::error::Error;
 use std::fs::File;
 use std::io::Read;
 use std::process;
 
-const SAMPLE_CONFIG_ARG: &str = "print-sample-config";
-const SINGLE_NODE_MODE: &str = "single-node-mode";
+#[derive(Parser)]
+#[command(author, version, about, long_about = None)]
+struct Cli {
+    /// Sets a custom config file
+    #[arg(short, long, value_name = "FILE")]
+    config: Option<PathBuf>,
+
+    /// Set listening address
+    #[arg(short, long, value_name = "IP:PORT")]
+    addr: Option<String>,
+
+    /// Turn debugging information on
+    #[arg(short, long, action = clap::ArgAction::Count)]
+    debug: u8,
+
+    /// Print a sample config to stdout
+    #[arg(long)]
+    print_same_config: bool,
+
+    /// Single node as a cluster
+    #[arg(long)]
+    single_node_mode: bool,
+
+    #[command(subcommand)]
+    command: Option<Commands>,
+}
+
+#[derive(Subcommand)]
+enum Commands {
+    /// does testing things
+    Test {
+        /// lists test values
+        #[arg(short, long)]
+        list: bool,
+    },
+}
 
 fn main() {
-    let matches = App::new("Pancake")
-        .version(crate_version!())
-        .author("whatot whatot2@gmail.com")
-        .about("A misc service by Rust")
-        .arg(
-            Arg::with_name("config")
-                .short("C")
-                .long("config")
-                .value_name("FILE")
-                .help("Set config file")
-                .takes_value(true),
-        )
-        .arg(
-            Arg::with_name("addr")
-                .short("A")
-                .long("addr")
-                .takes_value(true)
-                .value_name("IP:PORT")
-                .help("Set listening address"),
-        )
-        .arg(
-            Arg::with_name(SAMPLE_CONFIG_ARG)
-                .long(SAMPLE_CONFIG_ARG)
-                .help("Print a sample config to stdout"),
-        )
-        .arg(
-            Arg::with_name(SINGLE_NODE_MODE)
-                .long(SINGLE_NODE_MODE)
-                .help("Single node as a cluster"),
-        )
-        .get_matches();
+    let cli = Cli::parse();
 
-    if matches.is_present(SAMPLE_CONFIG_ARG) {
+    if cli.print_same_config {
         let config = PancakeConfig::default();
         println!("{}", toml::to_string_pretty(&config).unwrap());
         process::exit(0);
     }
 
-    let mut config = matches
-        .value_of("config")
-        .map_or_else(PancakeConfig::default, |path| {
-            File::open(&path)
-                .map_err::<Box<Error>, _>(|e| Box::new(e))
-                .and_then(|mut f| {
-                    let mut s = String::new();
-                    f.read_to_string(&mut s)?;
-                    let c = toml::from_str(&s)?;
-                    Ok(c)
-                })
-                .unwrap_or_else(|e| {
-                    println!("invalid config file, {:?}, {}", path, e);
-                    process::exit(-1);
-                })
-        });
+    let mut config = cli.config.map_or_else(PancakeConfig::default, |path| {
+        File::open(&path)
+            .map_err::<Box<dyn Error>, _>(|e| Box::new(e))
+            .and_then(|mut f| {
+                let mut s = String::new();
+                f.read_to_string(&mut s)?;
+                let c = toml::from_str(&s)?;
+                Ok(c)
+            })
+            .unwrap_or_else(|e| {
+                println!("invalid config file, {:?}, {}", path, e);
+                process::exit(-1);
+            })
+    });
 
-    if matches.is_present(SINGLE_NODE_MODE) {
+    if cli.single_node_mode {
         config.setup_single_node();
     }
 
