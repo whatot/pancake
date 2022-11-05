@@ -4,11 +4,11 @@ extern crate toml;
 #[macro_use]
 extern crate serde_derive;
 extern crate serde_json;
+mod profile;
+
+use std::{error::Error, fs::File, io::Read, path::PathBuf, process};
 
 use clap::{Parser, Subcommand};
-
-mod profile;
-use std::{error::Error, fs::File, io::Read, path::PathBuf, process};
 
 use crate::profile::ProfileOpt;
 
