@@ -1,12 +1,11 @@
 use std::env;
 
-use super::common::KeyType;
-use super::common::ObjectStorage;
-use super::common::OpError;
-use super::common::SmallValueType;
+use super::KeyType;
+use super::OpError;
+use super::Oss;
+use super::SmallValueType;
 
 use async_trait::async_trait;
-
 use aws_sdk_s3::types::ByteStream;
 use aws_smithy_http::body::SdkBody;
 
@@ -39,7 +38,7 @@ impl AwsS3Client {
 }
 
 #[async_trait]
-impl ObjectStorage for AwsS3Client {
+impl Oss for AwsS3Client {
     async fn get(&self, _key: KeyType) -> Result<Option<&SmallValueType>, OpError> {
         unimplemented!()
     }

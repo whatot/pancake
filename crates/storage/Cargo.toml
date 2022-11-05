@@ -4,3 +4,9 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+aws-config = "0.51.0"
+aws-sdk-s3 = "0.21.0"
+aws-smithy-http = "0.51.0"
+url = "2.3.1"
+hyper = "0.14.22"
+async-trait = "0.1.58"

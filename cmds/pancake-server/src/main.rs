@@ -3,21 +3,17 @@ extern crate serde;
 extern crate toml;
 #[macro_use]
 extern crate serde_derive;
-extern crate aws_sdk_s3;
-extern crate aws_smithy_http;
-extern crate hyper;
 extern crate serde_json;
-extern crate url;
-mod profile;
-
-use std::path::PathBuf;
 
 use clap::{Parser, Subcommand};
 
+mod profile;
 use crate::profile::ProfileOpt;
+
 use std::error::Error;
 use std::fs::File;
 use std::io::Read;
+use std::path::PathBuf;
 use std::process;
 
 #[derive(Parser)]
