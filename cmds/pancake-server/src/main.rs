@@ -8,13 +8,9 @@ extern crate serde_json;
 use clap::{Parser, Subcommand};
 
 mod profile;
-use crate::profile::ProfileOpt;
+use std::{error::Error, fs::File, io::Read, path::PathBuf, process};
 
-use std::error::Error;
-use std::fs::File;
-use std::io::Read;
-use std::path::PathBuf;
-use std::process;
+use crate::profile::ProfileOpt;
 
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]

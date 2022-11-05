@@ -1,13 +1,10 @@
 use std::env;
 
-use super::KeyType;
-use super::OpError;
-use super::Oss;
-use super::SmallValueType;
-
 use async_trait::async_trait;
 use aws_sdk_s3::types::ByteStream;
 use aws_smithy_http::body::SdkBody;
+
+use super::{KeyType, OpError, Oss, SmallValueType};
 
 #[derive(Debug)]
 pub struct AwsS3Client {

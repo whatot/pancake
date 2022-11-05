@@ -1,7 +1,6 @@
 pub mod s3;
 
-use std::error::Error;
-use std::fmt;
+use std::{error::Error, fmt};
 
 use async_trait::async_trait;
 
