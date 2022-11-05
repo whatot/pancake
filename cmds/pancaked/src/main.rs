@@ -1,12 +1,20 @@
 extern crate clap;
-extern crate pancake;
+extern crate serde;
 extern crate toml;
+#[macro_use]
+extern crate serde_derive;
+extern crate aws_sdk_s3;
+extern crate aws_smithy_http;
+extern crate hyper;
+extern crate serde_json;
+extern crate url;
+mod profile;
 
 use std::path::PathBuf;
 
 use clap::{Parser, Subcommand};
 
-use pancake::config::PancakeConfig;
+use crate::profile::ProfileOpt;
 use std::error::Error;
 use std::fs::File;
 use std::io::Read;
@@ -53,12 +61,12 @@ fn main() {
     let cli = Cli::parse();
 
     if cli.print_same_config {
-        let config = PancakeConfig::default();
+        let config = ProfileOpt::default();
         println!("{}", toml::to_string_pretty(&config).unwrap());
         process::exit(0);
     }
 
-    let mut config = cli.config.map_or_else(PancakeConfig::default, |path| {
+    let mut config = cli.config.map_or_else(ProfileOpt::default, |path| {
         File::open(&path)
             .map_err::<Box<dyn Error>, _>(|e| Box::new(e))
             .and_then(|mut f| {
